@@ -62,6 +62,16 @@ npm -v
 
 ```
 
+# Installazione
+
+```
+mkdir  /var/www/timeclock
+chown -R /var/www/timeclock
+cd  /var/www/timeclock
+npm install
+```
+
+
 ## Modifica dei file
 
 *server.js*
