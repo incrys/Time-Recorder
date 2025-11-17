@@ -1,6 +1,6 @@
-# Time clock
+# Time Recorder
 
-> Time clock piccole aziende
+> Time clock per piccole aziende
 
 *Read this in other languages: [English](README.EN.md).*
 
