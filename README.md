@@ -63,7 +63,7 @@ npm -v
 
 ```
 
-#Modifica dei file
+## Modifica dei file
 
 *server.js*
 
@@ -167,4 +167,7 @@ Collegandosi al portale admin, verrà richiesto il PIN dell'amministratore.
 Qui sarà possibile editare tutti gli orari dei dipendenti indifferentemente, selezionando solo mese e nome dipendente
 
 [img]
+
+
+# Licenza
 
