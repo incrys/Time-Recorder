@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marcatempo - Azienda</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 1200px;
+            min-height: 600px;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .send-report-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .send-report-btn:hover {
+            background: #0b5ed7;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(13,110,253,0.3);
+        }
+
+        .send-report-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .left-panel {
+            background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+            width: 300px;
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-right: 1px solid #dee2e6;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #0d6efd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .kiosk {
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 50px;
+        }
+
+        .datetime {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .date {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .time {
+            font-size: 48px;
+            font-weight: 300;
+            color: #212529;
+        }
+
+        .location {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .location-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 5px;
+        }
+
+        .connection-status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .status-online {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .right-panel {
+            flex: 1;
+            padding: 40px;
+            padding-top: 80px;
+            overflow-y: auto;
+        }
+
+        .search-bar {
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: #0d6efd;
+        }
+
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .user-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .user-item.working {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .user-item.working:hover {
+            background: #c3e6cb;
+        }
+
+        .user-item.on-break {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+
+        .user-item.on-break:hover {
+            background: #ffe8a1;
+        }
+
+        .user-item.overtime {
+            background: #e7e3ff;
+            border-left: 4px solid #6f42c1;
+        }
+
+        .user-item.overtime:hover {
+            background: #d6d0f5;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            margin-right: 15px;
+            color: white;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .user-status {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+
+        .user-item.working .user-status {
+            color: #155724;
+        }
+
+        .user-item.on-break .user-status {
+            color: #856404;
+        }
+
+        .user-item.overtime .user-status {
+            color: #5a32a3;
+        }
+
+        .pin-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1500;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .pin-panel.active {
+            display: flex;
+        }
+
+        .pin-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+        }
+
+        .pin-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: #e9ecef;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pin-close-btn:hover {
+            background: #dee2e6;
+        }
+
+        .pin-header {
+            margin-bottom: 30px;
+        }
+
+        .pin-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 10px;
+        }
+
+        .pin-subtitle {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .pin-input-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .pin-digit {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 32px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .pin-digit:focus {
+            border-color: #0d6efd;
+        }
+
+        .pin-digit.error {
+            border-color: #dc3545;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .pin-keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .pin-key {
+            padding: 20px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pin-key:hover {
+            background: #e9ecef;
+            transform: scale(1.05);
+        }
+
+        .pin-key:active {
+            transform: scale(0.95);
+        }
+
+        .pin-error {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+
+        .checkin-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .checkin-panel.active {
+            display: flex;
+        }
+
+        .checkin-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: #e9ecef;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: #dee2e6;
+        }
+
+        .checkin-header {
+            margin-bottom: 30px;
+        }
+
+        .checkin-title {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .checkin-location {
+            font-size: 20px;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .checkin-user {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .time-stats {
+            margin-bottom: 30px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 300;
+            color: #212529;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-checkin {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-checkin:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40,167,69,0.3);
+        }
+
+        .btn-checkout {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-checkout:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220,53,69,0.3);
+        }
+
+        .btn-break {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-break:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,193,7,0.3);
+        }
+
+        .btn-endbreak {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-endbreak:hover {
+            background: #138496;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(23,162,184,0.3);
+        }
+
+        .overtime-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s;
+        }
+
+        .overtime-toggle:hover {
+            background: #e9ecef;
+            border-color: #6f42c1;
+        }
+
+        .overtime-toggle label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #495057;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .overtime-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #6f42c1;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+
+        .status-active {
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+
+        .status-break {
+            background: #ffc107;
+            animation: pulse 2s infinite;
+        }
+
+        .status-overtime {
+            background: #6f42c1;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            z-index: 2000;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+            max-width: 300px;
+        }
+
+        .notification.show {
+            display: block;
+        }
+
+        .notification.error {
+            border-left: 4px solid #dc3545;
+        }
+
+        .notification.success {
+            border-left: 4px solid #28a745;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .left-panel {
+                width: 100%;
+                padding: 20px;
+            }
+
+            .right-panel {
+                padding-top: 40px;
+            }
+
+            .time {
+                font-size: 36px;
+            }
+
+            .send-report-btn {
+                top: 10px;
+                right: 10px;
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+
+            .pin-digit {
+                width: 50px;
+                height: 50px;
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="send-report-btn" onclick="sendReportManually()" id="sendReportBtn">
+            &#128231; Invia Report
+        </button>
+
+        <div class="left-panel">
+            <div class="logo">
+                <div class="logo-icon">M</div>
+                <div class="logo-text">Marcatempo</div>
+            </div>
+            <div class="kiosk">KIOSK v4.1</div>
+            <div class="datetime">
+                <div class="date" id="currentDate"></div>
+                <div class="time" id="currentTime"></div>
+            </div>
+            <div class="location">
+                <div class="location-title">Azienda</div>
+            </div>
+            <div class="connection-status status-offline" id="connectionStatus">
+                &#128308; Server offline
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput" placeholder="&#128269; Cerca...">
+            </div>
+            <div class="user-list" id="userList"></div>
+        </div>
+    </div>
+
+    <div class="pin-panel" id="pinPanel">
+        <div class="pin-content">
+            <button class="pin-close-btn" onclick="closePinPanel()">&times;</button>
+            <div class="pin-header">
+                <div class="pin-title">Inserisci PIN</div>
+                <div class="pin-subtitle" id="pinUserName"></div>
+            </div>
+            <div class="pin-input-container">
+                <input type="password" maxlength="1" class="pin-digit" id="pin1" readonly>
+                <input type="password" maxlength="1" class="pin-digit" id="pin2" readonly>
+                <input type="password" maxlength="1" class="pin-digit" id="pin3" readonly>
+                <input type="password" maxlength="1" class="pin-digit" id="pin4" readonly>
+            </div>
+            <div class="pin-keypad">
+                <button class="pin-key" onclick="enterPin('1')">1</button>
+                <button class="pin-key" onclick="enterPin('2')">2</button>
+                <button class="pin-key" onclick="enterPin('3')">3</button>
+                <button class="pin-key" onclick="enterPin('4')">4</button>
+                <button class="pin-key" onclick="enterPin('5')">5</button>
+                <button class="pin-key" onclick="enterPin('6')">6</button>
+                <button class="pin-key" onclick="enterPin('7')">7</button>
+                <button class="pin-key" onclick="enterPin('8')">8</button>
+                <button class="pin-key" onclick="enterPin('9')">9</button>
+                <button class="pin-key" onclick="clearPin()">&#10005;</button>
+                <button class="pin-key" onclick="enterPin('0')">0</button>
+                <button class="pin-key" onclick="deleteLastPin()">&#9003;</button>
+            </div>
+            <div class="pin-error" id="pinError"></div>
+        </div>
+    </div>
+
+    <div class="checkin-panel" id="checkinPanel">
+        <div class="checkin-content">
+            <button class="close-btn" onclick="closeCheckinPanel()">&times;</button>
+            <div class="checkin-header">
+                <div class="checkin-title">Clock in to</div>
+                <div class="checkin-location">Azienda</div>
+            </div>
+            <div class="checkin-user">
+                <div class="user-avatar" id="modalAvatar"></div>
+                <div class="user-name" id="modalUserName"></div>
+                <span class="status-indicator" id="statusIndicator" style="display:none;"></span>
+            </div>
+            <div class="time-stats">
+                <div class="stat-row">
+                    <div class="stat">
+                        <div class="stat-label">Day Total</div>
+                        <div class="stat-value" id="dayTotal">00:00:00</div>
+                    </div>
+                </div>
+                <div class="stat-row">
+                    <div class="stat">
+                        <div class="stat-label">Work</div>
+                        <div class="stat-value" id="workTime">00:00:00</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Break</div>
+                        <div class="stat-value" id="breakTime">00:00:00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="overtime-toggle" id="overtimeToggle">
+                <input type="checkbox" id="overtimeCheckbox" class="overtime-checkbox">
+                <label for="overtimeCheckbox">&#9201; Straordinario</label>
+            </div>
+            <button class="action-btn btn-checkin" id="checkinBtn" onclick="toggleCheckin()">
+                &#9201; Clock in
+            </button>
+            <button class="action-btn btn-break" id="breakBtn" onclick="toggleBreak()" style="display:none;">
+                &#9749; Start break
+            </button>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        const API_URL = 'http://IP_SERVER:3000/api';
+
+        const users = [
+            { id: 1, name: 'User1', initials: 'U1', color: '#4169E1', pin: '1234' },
+            { id: 2, name: 'User2', initials: 'U2', color: '#6f42c1', pin: '1234' },
+            { id: 3, name: 'User3', initials: 'U3', color: '#82c91e', pin: '1234' },
+            { id: 4, name: 'User4', initials: 'U4', color: '#1e88e5', pin: '1234' },
+            { id: 5, name: 'User5', initials: 'U5', color: '#2e7d32', pin: '1234' },
+            { id: 6, name: 'User6', initials: 'U6', color: '#ff9800', pin: '1234' },
+            { id: 7, name: 'User7', initials: 'U7', color: '#1976d2', pin: '1234' },
+            { id: 8, name: 'User8', initials: 'U8', color: '#00897b', pin: '1234' }
+        ];
+
+        let currentUser = null;
+        let pendingUser = null;
+        let currentPin = '';
+        let checkinTime = null;
+        let breakStartTime = null;
+        let totalWorkTime = 0;
+        let totalBreakTime = 0;
+        let timerInterval = null;
+        let isOnBreak = false;
+        let isOvertimeMode = false;
+        let userSessions = new Map();
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function autoClosePanel(delay = 1000) {
+            setTimeout(() => {
+                closeCheckinPanel();
+            }, delay);
+        }
+
+        async function sendReportManually() {
+            const btn = document.getElementById('sendReportBtn');
+            btn.disabled = true;
+            btn.textContent = '\u{1F4E7} Invio...';
+            
+            try {
+                const response = await fetch(`${API_URL}/send-report`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Email inviata con successo!', 'success');
+                } else {
+                    showNotification(`Errore: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showNotification('Errore invio report', 'error');
+                console.error('Errore:', error);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '\u{1F4E7} Invia Report';
+            }
+        }
+
+        async function checkServerConnection() {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                if (response.ok) {
+                    document.getElementById('connectionStatus').className = 'connection-status status-online';
+                    document.getElementById('connectionStatus').innerHTML = '&#128994; Server online';
+                    return true;
+                }
+            } catch (error) {
+                document.getElementById('connectionStatus').className = 'connection-status status-offline';
+                document.getElementById('connectionStatus').innerHTML = '&#128308; Server offline';
+                return false;
+            }
+        }
+
+        async function loadUserSession(userId) {
+            try {
+                const response = await fetch(`${API_URL}/session/${userId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.active) {
+                        userSessions.set(userId, data.session);
+                        return data.session;
+                    }
+                }
+            } catch (error) {
+                console.error('Errore caricamento sessione:', error);
+            }
+            return null;
+        }
+
+        async function sendToServer(action, data) {
+            try {
+                const response = await fetch(`${API_URL}/timbratura`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        userId: currentUser.id,
+                        userName: currentUser.name,
+                        action: action,
+                        timestamp: new Date().toISOString(),
+                        ...data
+                    })
+                });
+
+                if (response.ok) {
+                    showNotification('Timbratura registrata', 'success');
+                    return true;
+                } else {
+                    showNotification('Errore nel salvataggio', 'error');
+                    return false;
+                }
+            } catch (error) {
+                showNotification('Server non raggiungibile', 'error');
+                console.error('Errore connessione:', error);
+                return false;
+            }
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', day: 'numeric', month: 'long' };
+            const dateStr = now.toLocaleDateString('it-IT', options);
+            document.getElementById('currentDate').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+            
+            const timeStr = now.toTimeString().slice(0, 5);
+            document.getElementById('currentTime').textContent = timeStr;
+        }
+
+        async function updateUserStatuses() {
+            try {
+                const response = await fetch(`${API_URL}/active-users`);
+                if (response.ok) {
+                    const data = await response.json();
+                    data.activeUsers.forEach(user => {
+                        userSessions.set(user.userId, user);
+                    });
+                    renderUsers();
+                }
+            } catch (error) {
+                console.error('Errore aggiornamento stati:', error);
+            }
+        }
+
+        function renderUsers() {
+            const userList = document.getElementById('userList');
+            userList.innerHTML = '';
+            
+            users.forEach(user => {
+                const session = userSessions.get(user.id);
+                const userItem = document.createElement('div');
+                
+                let statusClass = '';
+                let statusText = '';
+                
+                if (session) {
+                    const now = new Date();
+                    const checkinDate = new Date(session.checkinTime);
+                    const elapsedMinutes = Math.floor((now - checkinDate) / 60000);
+                    const hours = Math.floor(elapsedMinutes / 60);
+                    const minutes = elapsedMinutes % 60;
+                    const timeText = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+                    
+                    if (session.isOnBreak) {
+                        statusClass = 'on-break';
+                        statusText = `\u2615 In pausa (${timeText})`;
+                    } else if (session.isOvertime) {
+                        statusClass = 'overtime';
+                        statusText = `\u23F0 Straordinario (${timeText})`;
+                    } else {
+                        statusClass = 'working';
+                        statusText = `\u23F1 Attivo (${timeText})`;
+                    }
+                }
+                
+                userItem.className = `user-item ${statusClass}`;
+                userItem.innerHTML = `
+                    <div class="user-avatar" style="background-color: ${user.color}">${user.initials}</div>
+                    <div class="user-info">
+                        <div class="user-name">${user.name}</div>
+                        ${statusText ? `<div class="user-status">${statusText}</div>` : ''}
+                    </div>
+                `;
+                userItem.onclick = () => selectUser(user);
+                userList.appendChild(userItem);
+            });
+        }
+
+        function selectUser(user) {
+            pendingUser = user;
+            document.getElementById('pinUserName').textContent = user.name;
+            currentPin = '';
+            clearPinDisplay();
+            document.getElementById('pinError').textContent = '';
+            document.getElementById('pinPanel').classList.add('active');
+        }
+
+        function enterPin(digit) {
+            if (currentPin.length < 4) {
+                currentPin += digit;
+                updatePinDisplay();
+                
+                if (currentPin.length === 4) {
+                    setTimeout(() => verifyPin(), 300);
+                }
+            }
+        }
+
+        function deleteLastPin() {
+            if (currentPin.length > 0) {
+                currentPin = currentPin.slice(0, -1);
+                updatePinDisplay();
+            }
+        }
+
+        function clearPin() {
+            currentPin = '';
+            clearPinDisplay();
+            document.getElementById('pinError').textContent = '';
+        }
+
+        function updatePinDisplay() {
+            for (let i = 1; i <= 4; i++) {
+                const input = document.getElementById(`pin${i}`);
+                input.value = i <= currentPin.length ? '\u2022' : '';
+                input.classList.remove('error');
+            }
+        }
+
+        function clearPinDisplay() {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`pin${i}`).value = '';
+                document.getElementById(`pin${i}`).classList.remove('error');
+            }
+        }
+
+        function showPinError() {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`pin${i}`).classList.add('error');
+            }
+            document.getElementById('pinError').textContent = 'PIN errato!';
+            setTimeout(() => {
+                clearPin();
+            }, 1000);
+        }
+
+        async function verifyPin() {
+            if (currentPin === pendingUser.pin) {
+                document.getElementById('pinPanel').classList.remove('active');
+                currentUser = pendingUser;
+                await openCheckinPanel();
+            } else {
+                showPinError();
+            }
+        }
+
+        function closePinPanel() {
+            document.getElementById('pinPanel').classList.remove('active');
+            currentPin = '';
+            pendingUser = null;
+        }
+
+        async function openCheckinPanel() {
+            document.getElementById('modalAvatar').style.backgroundColor = currentUser.color;
+            document.getElementById('modalAvatar').textContent = currentUser.initials;
+            document.getElementById('modalUserName').textContent = currentUser.name;
+            
+            const session = await loadUserSession(currentUser.id);
+            
+            if (session) {
+                checkinTime = new Date(session.checkinTime);
+                isOnBreak = session.isOnBreak;
+                totalBreakTime = session.totalBreakTime;
+                isOvertimeMode = session.isOvertime || false;
+                
+                if (session.breakStartTime) {
+                    breakStartTime = new Date(session.breakStartTime);
+                }
+                
+                startTimer();
+                
+                document.getElementById('checkinBtn').innerHTML = '\u{1F6AA} Clock out';
+                document.getElementById('checkinBtn').className = 'action-btn btn-checkout';
+                document.getElementById('breakBtn').style.display = 'block';
+                document.getElementById('statusIndicator').style.display = 'inline-block';
+                document.getElementById('overtimeToggle').style.display = 'none';
+                
+                if (isOnBreak) {
+                    document.getElementById('breakBtn').innerHTML = '\u25B6 End break';
+                    document.getElementById('breakBtn').className = 'action-btn btn-endbreak';
+                    document.getElementById('statusIndicator').className = 'status-indicator status-break';
+                } else {
+                    document.getElementById('breakBtn').innerHTML = '\u2615 Start break';
+                    document.getElementById('breakBtn').className = 'action-btn btn-break';
+                    const indicatorClass = isOvertimeMode ? 'status-overtime' : 'status-active';
+                    document.getElementById('statusIndicator').className = `status-indicator ${indicatorClass}`;
+                }
+            } else {
+                resetUserSession();
+            }
+            
+            document.getElementById('checkinPanel').classList.add('active');
+        }
+
+        function closeCheckinPanel() {
+            stopTimer();
+            document.getElementById('checkinPanel').classList.remove('active');
+            currentUser = null;
+        }
+
+        function resetUserSession() {
+            totalWorkTime = 0;
+            totalBreakTime = 0;
+            checkinTime = null;
+            breakStartTime = null;
+            isOnBreak = false;
+            isOvertimeMode = false;
+            stopTimer();
+            updateDisplay();
+            
+            document.getElementById('checkinBtn').innerHTML = '\u23F1 Clock in';
+            document.getElementById('checkinBtn').className = 'action-btn btn-checkin';
+            document.getElementById('breakBtn').style.display = 'none';
+            document.getElementById('statusIndicator').style.display = 'none';
+            document.getElementById('overtimeToggle').style.display = 'flex';
+            document.getElementById('overtimeCheckbox').checked = false;
+        }
+
+        function toggleCheckin() {
+            if (!checkinTime) {
+                checkin();
+            } else {
+                checkout();
+            }
+        }
+
+        async function checkin() {
+            checkinTime = new Date();
+            isOvertimeMode = document.getElementById('overtimeCheckbox').checked;
+            const action = isOvertimeMode ? 'checkin_overtime' : 'checkin';
+            
+            startTimer();
+            
+            document.getElementById('checkinBtn').innerHTML = '\u{1F6AA} Clock out';
+            document.getElementById('checkinBtn').className = 'action-btn btn-checkout';
+            document.getElementById('breakBtn').style.display = 'block';
+            document.getElementById('statusIndicator').style.display = 'inline-block';
+            const indicatorClass = isOvertimeMode ? 'status-overtime' : 'status-active';
+            document.getElementById('statusIndicator').className = `status-indicator ${indicatorClass}`;
+            document.getElementById('overtimeToggle').style.display = 'none';
+            
+            await sendToServer(action, {
+                checkinTime: checkinTime.toISOString(),
+                isOvertime: isOvertimeMode
+            });
+            
+            updateUserStatuses();
+            autoClosePanel(1000);
+        }
+
+        async function checkout() {
+            if (isOnBreak) {
+                showNotification('Devi terminare la pausa prima del checkout!', 'error');
+                return;
+            }
+
+            const checkoutTime = new Date();
+            const workDuration = Math.floor((checkoutTime - checkinTime) / 1000) - totalBreakTime;
+            totalWorkTime += workDuration;
+            const action = isOvertimeMode ? 'checkout_overtime' : 'checkout';
+            
+            await sendToServer(action, {
+                checkoutTime: checkoutTime.toISOString(),
+                totalWork: totalWorkTime,
+                totalBreak: totalBreakTime,
+                isOvertime: isOvertimeMode
+            });
+            
+            stopTimer();
+            userSessions.delete(currentUser.id);
+            updateUserStatuses();
+            
+            const modeText = isOvertimeMode ? 'straordinario' : 'ordinario';
+            showNotification(`Checkout ${modeText} completato! Tempo lavorato: ${formatTime(totalWorkTime)}`, 'success');
+            resetUserSession();
+            autoClosePanel(1000);
+        }
+
+        function toggleBreak() {
+            if (!isOnBreak) {
+                startBreak();
+            } else {
+                endBreak();
+            }
+        }
+
+        async function startBreak() {
+            breakStartTime = new Date();
+            isOnBreak = true;
+            
+            document.getElementById('breakBtn').innerHTML = '\u25B6 End break';
+            document.getElementById('breakBtn').className = 'action-btn btn-endbreak';
+            document.getElementById('statusIndicator').className = 'status-indicator status-break';
+            
+            await sendToServer('break_start', {
+                breakStartTime: breakStartTime.toISOString()
+            });
+            
+            updateUserStatuses();
+            autoClosePanel(1000);
+        }
+
+        async function endBreak() {
+            const breakEndTime = new Date();
+            const breakDuration = Math.floor((breakEndTime - breakStartTime) / 1000);
+            totalBreakTime += breakDuration;
+            
+            await sendToServer('break_end', {
+                breakEndTime: breakEndTime.toISOString(),
+                breakDuration: breakDuration,
+                totalBreakAccumulated: totalBreakTime
+            });
+            
+            breakStartTime = null;
+            isOnBreak = false;
+            
+            document.getElementById('breakBtn').innerHTML = '\u2615 Start break';
+            document.getElementById('breakBtn').className = 'action-btn btn-break';
+            const indicatorClass = isOvertimeMode ? 'status-overtime' : 'status-active';
+            document.getElementById('statusIndicator').className = `status-indicator ${indicatorClass}`;
+            
+            updateUserStatuses();
+            autoClosePanel(1000);
+        }
+
+        function startTimer() {
+            stopTimer();
+            timerInterval = setInterval(updateDisplay, 1000);
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function updateDisplay() {
+            if (!checkinTime) {
+                document.getElementById('dayTotal').textContent = '00:00:00';
+                document.getElementById('workTime').textContent = '00:00:00';
+                document.getElementById('breakTime').textContent = '00:00:00';
+                return;
+            }
+
+            const now = new Date();
+            const elapsed = Math.floor((now - checkinTime) / 1000);
+            
+            let currentBreakTime = totalBreakTime;
+            if (isOnBreak && breakStartTime) {
+                currentBreakTime += Math.floor((now - breakStartTime) / 1000);
+            }
+            
+            const workTime = elapsed - currentBreakTime;
+            
+            document.getElementById('dayTotal').textContent = formatTime(elapsed);
+            document.getElementById('workTime').textContent = formatTime(workTime);
+            document.getElementById('breakTime').textContent = formatTime(currentBreakTime);
+        }
+
+        function formatTime(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const userItems = document.querySelectorAll('.user-item');
+            
+            userItems.forEach(item => {
+                const userName = item.querySelector('.user-name').textContent.toLowerCase();
+                if (userName.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+        renderUsers();
+        checkServerConnection();
+        updateUserStatuses();
+        
+        setInterval(updateUserStatuses, 30000);
+        setInterval(checkServerConnection, 30000);
+    </script>
+</body>
+</html>

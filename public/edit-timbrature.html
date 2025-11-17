@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Timbrature - Azienda</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: #0d6efd;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: #e7f3ff;
+            border-radius: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .login-panel {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-panel.hidden {
+            display: none;
+        }
+
+        .login-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .login-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 30px;
+        }
+
+        .pin-input-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .pin-digit {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 32px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .pin-digit:focus {
+            border-color: #0d6efd;
+        }
+
+        .pin-digit.error {
+            border-color: #dc3545;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .pin-keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .pin-key {
+            padding: 20px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pin-key:hover {
+            background: #e9ecef;
+            transform: scale(1.05);
+        }
+
+        .pin-key:active {
+            transform: scale(0.95);
+        }
+
+        .pin-error {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 15px;
+            min-height: 20px;
+        }
+
+        .content {
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        .timbrature-table {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow-x: auto;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            min-width: 150px;
+        }
+
+        .filter-select:focus {
+            border-color: #0d6efd;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .editable-cell {
+            position: relative;
+        }
+
+        .time-input {
+            padding: 6px 10px;
+            border: 2px solid #0d6efd;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 80px;
+            outline: none;
+            background: #e7f3ff;
+        }
+
+        .readonly-cell {
+            color: #6c757d;
+            background: #f8f9fa;
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .calculated-cell {
+            color: #28a745;
+            background: #d4edda;
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        .empty-cell {
+            color: #dc3545;
+            font-weight: 500;
+        }
+
+        .save-btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .save-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40,167,69,0.3);
+        }
+
+        .save-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            z-index: 2000;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .notification.show {
+            display: block;
+        }
+
+        .notification.error {
+            border-left: 4px solid #dc3545;
+        }
+
+        .notification.success {
+            border-left: 4px solid #28a745;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .info-box {
+            margin-top: 15px;
+            padding: 12px;
+            background: #d1ecf1;
+            border-left: 4px solid #0c5460;
+            border-radius: 8px;
+            color: #0c5460;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .pin-digit {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-panel" id="loginPanel">
+        <div class="login-content">
+            <div class="login-title">Inserisci il tuo PIN</div>
+            <div class="pin-input-container">
+                <input type="password" maxlength="1" class="pin-digit" id="pin1" readonly>
+                <input type="password" maxlength="1" class="pin-digit" id="pin2" readonly>
+                <input type="password" maxlength="1" class="pin-digit" id="pin3" readonly>
+                <input type="password" maxlength="1" class="pin-digit" id="pin4" readonly>
+            </div>
+            <div class="pin-keypad">
+                <button class="pin-key" onclick="enterPin('1')">1</button>
+                <button class="pin-key" onclick="enterPin('2')">2</button>
+                <button class="pin-key" onclick="enterPin('3')">3</button>
+                <button class="pin-key" onclick="enterPin('4')">4</button>
+                <button class="pin-key" onclick="enterPin('5')">5</button>
+                <button class="pin-key" onclick="enterPin('6')">6</button>
+                <button class="pin-key" onclick="enterPin('7')">7</button>
+                <button class="pin-key" onclick="enterPin('8')">8</button>
+                <button class="pin-key" onclick="enterPin('9')">9</button>
+                <button class="pin-key" onclick="clearPin()">✕</button>
+                <button class="pin-key" onclick="enterPin('0')">0</button>
+                <button class="pin-key" onclick="deleteLastPin()">⌫</button>
+            </div>
+            <div class="pin-error" id="pinError"></div>
+        </div>
+    </div>
+
+    <div class="content" id="mainContent">
+        <div class="container">
+            <div class="header">
+                <div class="header-left">
+                    <div class="logo-icon">T</div>
+                    <div class="header-title">Editor Timbrature</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div class="user-badge">
+                        <div class="user-avatar" id="userAvatar"></div>
+                        <div id="userName"></div>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">Esci</button>
+                </div>
+            </div>
+
+            <div class="timbrature-table">
+                <div class="filter-bar">
+                    <select class="filter-select" id="monthFilter" onchange="loadTimbrature()">
+                        <option value="">Seleziona mese...</option>
+                    </select>
+                </div>
+
+                <div id="tableContainer">
+                    <div class="no-data">Seleziona un mese per visualizzare le timbrature</div>
+                </div>
+
+                <button class="save-btn" id="saveBtn" onclick="saveChanges()" style="display:none;">
+                    &#x1F4BE; Salva Modifiche
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        const API_URL = 'http://IP_SERVER:3000/api';
+
+        const users = [
+            { id: 1, name: 'User1', initials: 'U1', color: '#4169E1', pin: '1234' },
+            { id: 2, name: 'User2', initials: 'U2', color: '#6f42c1', pin: '1234' },
+            { id: 3, name: 'User3', initials: 'U3', color: '#82c91e', pin: '1234' },
+            { id: 4, name: 'User4', initials: 'U4', color: '#1e88e5', pin: '1234' },
+            { id: 5, name: 'User5', initials: 'U5', color: '#2e7d32', pin: '1234' },
+            { id: 6, name: 'User6', initials: 'U6', color: '#ff9800', pin: '1234' },
+            { id: 7, name: 'User7', initials: 'U7', color: '#1976d2', pin: '1234' },
+            { id: 8, name: 'User8', initials: 'U8', color: '#00897b', pin: '1234' }
+        ];
+
+        let currentUser = null;
+        let currentPin = '';
+        let csvData = [];
+        let modifications = [];
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function enterPin(digit) {
+            if (currentPin.length < 4) {
+                currentPin += digit;
+                updatePinDisplay();
+                
+                if (currentPin.length === 4) {
+                    setTimeout(() => verifyPin(), 300);
+                }
+            }
+        }
+
+        function deleteLastPin() {
+            if (currentPin.length > 0) {
+                currentPin = currentPin.slice(0, -1);
+                updatePinDisplay();
+            }
+        }
+
+        function clearPin() {
+            currentPin = '';
+            clearPinDisplay();
+            document.getElementById('pinError').textContent = '';
+        }
+
+        function updatePinDisplay() {
+            for (let i = 1; i <= 4; i++) {
+                const input = document.getElementById(`pin${i}`);
+                input.value = i <= currentPin.length ? '•' : '';
+                input.classList.remove('error');
+            }
+        }
+
+        function clearPinDisplay() {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`pin${i}`).value = '';
+                document.getElementById(`pin${i}`).classList.remove('error');
+            }
+        }
+
+        function showPinError() {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`pin${i}`).classList.add('error');
+            }
+            document.getElementById('pinError').textContent = 'PIN errato!';
+            setTimeout(() => {
+                clearPin();
+            }, 1000);
+        }
+
+        function verifyPin() {
+            const user = users.find(u => u.pin === currentPin);
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginPanel').classList.add('hidden');
+                document.getElementById('mainContent').classList.add('active');
+                
+                document.getElementById('userAvatar').style.backgroundColor = user.color;
+                document.getElementById('userAvatar').textContent = user.initials;
+                document.getElementById('userName').textContent = user.name;
+                
+                populateMonthFilter();
+            } else {
+                showPinError();
+            }
+        }
+
+        function logout() {
+            // Ricarica completa della pagina per pulire la sessione
+            window.location.reload();
+        }
+
+        function populateMonthFilter() {
+            const select = document.getElementById('monthFilter');
+            select.innerHTML = '<option value="">Seleziona mese...</option>';
+            
+            const now = new Date();
+            for (let i = 0; i < 12; i++) {
+                const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const monthName = date.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' });
+                
+                const option = document.createElement('option');
+                option.value = `${year}-${month}`;
+                option.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+                select.appendChild(option);
+            }
+        }
+
+        async function loadTimbrature() {
+            const monthValue = document.getElementById('monthFilter').value;
+            if (!monthValue) return;
+
+            const [year, month] = monthValue.split('-');
+            
+            try {
+                const response = await fetch(`${API_URL}/report/${year}/${month}`);
+                if (!response.ok) {
+                    showNotification('File non trovato per questo mese', 'error');
+                    document.getElementById('tableContainer').innerHTML = '<div class="no-data">Nessun dato disponibile per questo mese</div>';
+                    return;
+                }
+
+                const csvText = await response.text();
+                parseCSV(csvText);
+                renderTable();
+            } catch (error) {
+                showNotification('Errore nel caricamento dei dati', 'error');
+                console.error(error);
+            }
+        }
+
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
+            
+            csvData = lines.slice(1).map(line => {
+                const matches = line.match(/(".*?"|[^,]+)(?=\s*,|\s*$)/g);
+                const values = matches ? matches.map(field => field.replace(/^"|"$/g, '').trim()) : [];
+                
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index] || '';
+                });
+                return row;
+            });
+
+            modifications = [];
+        }
+
+        function renderTable() {
+            const userRows = csvData.filter(row => row['Nome Utente'] === currentUser.name);
+            
+            if (userRows.length === 0) {
+                document.getElementById('tableContainer').innerHTML = '<div class="no-data">Nessuna timbratura trovata per te in questo mese</div>';
+                document.getElementById('saveBtn').style.display = 'none';
+                return;
+            }
+
+            const editableFields = [
+                'Ingresso Ordinario',
+                'Uscita Ordinaria',
+                'Ingresso Straordinario',
+                'Uscita Straordinaria',
+                'Inizio Pausa',
+                'Fine Pausa'
+            ];
+
+            const today = new Date();
+            const todayStr = today.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Entry</th>
+                            <th>Ingresso Ord.</th>
+                            <th>Uscita Ord.</th>
+                            <th>Ingresso Strd.</th>
+                            <th>Uscita Strd.</th>
+                            <th>Inizio Pausa</th>
+                            <th>Fine Pausa</th>
+                            <th>Tempo Lavoro</th>
+                            <th>Tempo Pausa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            userRows.forEach((row, rowIndex) => {
+                const globalIndex = csvData.indexOf(row);
+                const isToday = row['Data'] === todayStr;
+                
+                html += `<tr${isToday ? ' style="background: #fff3cd;"' : ''}>`;
+                html += `<td>${row['Data']}${isToday ? ' <span style="color: #856404; font-weight: 600;">📍 OGGI</span>' : ''}</td>`;
+                html += `<td>${row['Entry']}</td>`;
+
+                editableFields.forEach(field => {
+                    const value = row[field] || '';
+                    const isEmpty = !value || value === '' || value === '00:00:00';
+                    
+                    html += '<td class="editable-cell">';
+                    if (isToday) {
+                        html += `<span class="readonly-cell" style="color: #856404;">🔒 ${value || 'In corso'}</span>`;
+                    } else if (isEmpty) {
+                        html += `<input type="time" class="time-input" 
+                                data-row="${globalIndex}" 
+                                data-field="${field}" 
+                                step="1"
+                                onchange="trackModification(this); recalculateWorkTime(${globalIndex})">`;
+                    } else {
+                        html += `<span class="readonly-cell">${value}</span>`;
+                    }
+                    html += '</td>';
+                });
+
+                html += `<td><span class="calculated-cell" id="work-${globalIndex}">${row['Tempo Lavoro Totale'] || '-'}</span></td>`;
+                html += `<td><span class="calculated-cell" id="break-${globalIndex}">${row['Tempo Pausa Totale'] || '-'}</span></td>`;
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            
+            html += '<div class="info-box">';
+            html += '&#x2139; <strong>Le ore lavorate vengono ricalcolate automaticamente</strong> quando modifichi gli orari di ingresso, uscita o pausa.';
+            html += '</div>';
+            
+            if (userRows.some(row => row['Data'] === todayStr)) {
+                html += '<div style="margin-top: 15px; padding: 12px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px; color: #856404;">';
+                html += '&#x26A0; <strong>Nota:</strong> Le timbrature del giorno corrente non sono modificabili per evitare conflitti con le timbrature in tempo reale.';
+                html += '</div>';
+            }
+            
+            document.getElementById('tableContainer').innerHTML = html;
+            document.getElementById('saveBtn').style.display = 'block';
+        }
+
+        function trackModification(input) {
+            const rowIndex = parseInt(input.dataset.row);
+            const field = input.dataset.field;
+            const value = input.value;
+
+            const existingMod = modifications.find(m => m.rowIndex === rowIndex && m.field === field);
+            if (existingMod) {
+                existingMod.value = value;
+            } else {
+                modifications.push({ rowIndex, field, value });
+            }
+
+            csvData[rowIndex][field] = value;
+        }
+
+        function recalculateWorkTime(rowIndex) {
+            const row = csvData[rowIndex];
+            
+            const isOrdinary = row['Ingresso Ordinario'] || row['Uscita Ordinaria'];
+            const isOvertime = row['Ingresso Straordinario'] || row['Uscita Straordinaria'];
+            
+            let checkinTime, checkoutTime;
+            
+            if (isOrdinary) {
+                checkinTime = row['Ingresso Ordinario'];
+                checkoutTime = row['Uscita Ordinaria'];
+            } else if (isOvertime) {
+                checkinTime = row['Ingresso Straordinario'];
+                checkoutTime = row['Uscita Straordinaria'];
+            }
+            
+            if (!checkinTime || !checkoutTime) {
+                return;
+            }
+            
+            const checkinSeconds = timeToSeconds(checkinTime);
+            const checkoutSeconds = timeToSeconds(checkoutTime);
+            
+            if (checkinSeconds === null || checkoutSeconds === null) {
+                return;
+            }
+            
+            let totalSeconds = checkoutSeconds - checkinSeconds;
+            if (totalSeconds < 0) totalSeconds += 24 * 3600;
+            
+            let breakSeconds = 0;
+            const breakStarts = row['Inizio Pausa'] ? row['Inizio Pausa'].split('|').map(s => s.trim()) : [];
+            const breakEnds = row['Fine Pausa'] ? row['Fine Pausa'].split('|').map(s => s.trim()) : [];
+            
+            for (let i = 0; i < Math.min(breakStarts.length, breakEnds.length); i++) {
+                const startSec = timeToSeconds(breakStarts[i]);
+                const endSec = timeToSeconds(breakEnds[i]);
+                if (startSec !== null && endSec !== null) {
+                    let duration = endSec - startSec;
+                    if (duration < 0) duration += 24 * 3600;
+                    breakSeconds += duration;
+                }
+            }
+            
+            const workSeconds = totalSeconds - breakSeconds;
+            
+            row['Tempo Lavoro Totale'] = secondsToTime(workSeconds);
+            row['Tempo Pausa Totale'] = secondsToTime(breakSeconds);
+            
+            const workCell = document.getElementById(`work-${rowIndex}`);
+            const breakCell = document.getElementById(`break-${rowIndex}`);
+            
+            if (workCell) workCell.textContent = row['Tempo Lavoro Totale'];
+            if (breakCell) breakCell.textContent = row['Tempo Pausa Totale'];
+            
+            const workMod = modifications.find(m => m.rowIndex === rowIndex && m.field === 'Tempo Lavoro Totale');
+            if (workMod) {
+                workMod.value = row['Tempo Lavoro Totale'];
+            } else {
+                modifications.push({ rowIndex, field: 'Tempo Lavoro Totale', value: row['Tempo Lavoro Totale'] });
+            }
+            
+            const breakMod = modifications.find(m => m.rowIndex === rowIndex && m.field === 'Tempo Pausa Totale');
+            if (breakMod) {
+                breakMod.value = row['Tempo Pausa Totale'];
+            } else {
+                modifications.push({ rowIndex, field: 'Tempo Pausa Totale', value: row['Tempo Pausa Totale'] });
+            }
+        }
+
+        function timeToSeconds(timeStr) {
+            if (!timeStr) return null;
+            const parts = timeStr.split(':');
+            if (parts.length < 2) return null;
+            
+            const hours = parseInt(parts[0]) || 0;
+            const minutes = parseInt(parts[1]) || 0;
+            const seconds = parseInt(parts[2]) || 0;
+            
+            return hours * 3600 + minutes * 60 + seconds;
+        }
+
+        function secondsToTime(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        async function saveChanges() {
+            if (modifications.length === 0) {
+                showNotification('Nessuna modifica da salvare', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('saveBtn');
+            btn.disabled = true;
+            btn.textContent = '&#x1F4BE; Salvataggio...';
+
+            try {
+                const monthValue = document.getElementById('monthFilter').value;
+                const [year, month] = monthValue.split('-');
+
+                const response = await fetch(`${API_URL}/update-timbrature`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        year,
+                        month,
+                        data: csvData,
+                        userId: currentUser.id,
+                        userName: currentUser.name
+                    })
+                });
+
+                if (response.ok) {
+                    showNotification('&#x2705; Modifiche salvate con successo!', 'success');
+                    modifications = [];
+                    loadTimbrature();
+                } else {
+                    showNotification('&#x274C; Errore nel salvataggio', 'error');
+                }
+            } catch (error) {
+                showNotification('&#x274C; Errore di connessione', 'error');
+                console.error(error);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '&#x1F4BE; Salva Modifiche';
+            }
+        }
+    </script>
+</body>
+</html>

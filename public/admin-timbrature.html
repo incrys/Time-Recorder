@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - Azienda</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: #dc3545;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .admin-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: #ffe5e5;
+            border-radius: 10px;
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .login-panel {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-panel.hidden {
+            display: none;
+        }
+
+        .login-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .login-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #dc3545;
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+
+        .pin-input-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .pin-digit {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 32px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .pin-digit:focus {
+            border-color: #dc3545;
+        }
+
+        .pin-digit.error {
+            border-color: #dc3545;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .pin-keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .pin-key {
+            padding: 20px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pin-key:hover {
+            background: #e9ecef;
+            transform: scale(1.05);
+        }
+
+        .pin-key:active {
+            transform: scale(0.95);
+        }
+
+        .pin-error {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 15px;
+            min-height: 20px;
+        }
+
+        .content {
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        .controls-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            min-width: 150px;
+        }
+
+        .filter-select:focus {
+            border-color: #dc3545;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0b5ed7;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .timbrature-table {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 13px;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .time-input {
+            padding: 6px 10px;
+            border: 2px solid #0d6efd;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 90px;
+            outline: none;
+            background: #e7f3ff;
+        }
+
+        .readonly-cell {
+            color: #6c757d;
+            background: #f8f9fa;
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .user-badge-small {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .action-icons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            padding: 6px 10px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #e9ecef;
+            transform: scale(1.1);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            z-index: 2000;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+            max-width: 400px;
+        }
+
+        .notification.show {
+            display: block;
+        }
+
+        .notification.error {
+            border-left: 4px solid #dc3545;
+        }
+
+        .notification.success {
+            border-left: 4px solid #28a745;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1500;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #dc3545;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-select {
+                width: 100%;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-panel" id="loginPanel">
+        <div class="login-content">
+            <div class="login-title">&#128274; Admin Portal</div>
+            <div class="login-subtitle">Inserisci il PIN amministratore</div>
+            <div class="pin-input-container">
+                <input type="password" maxlength="1" class="pin-digit" id="pin1" readonly>
+                <input type="password" maxlength="1" class="pin-digit" id="pin2" readonly>
+                <input type="password" maxlength="1" class="pin-digit" id="pin3" readonly>
+                <input type="password" maxlength="1" class="pin-digit" id="pin4" readonly>
+            </div>
+            <div class="pin-keypad">
+                <button class="pin-key" onclick="enterPin('1')">1</button>
+                <button class="pin-key" onclick="enterPin('2')">2</button>
+                <button class="pin-key" onclick="enterPin('3')">3</button>
+                <button class="pin-key" onclick="enterPin('4')">4</button>
+                <button class="pin-key" onclick="enterPin('5')">5</button>
+                <button class="pin-key" onclick="enterPin('6')">6</button>
+                <button class="pin-key" onclick="enterPin('7')">7</button>
+                <button class="pin-key" onclick="enterPin('8')">8</button>
+                <button class="pin-key" onclick="enterPin('9')">9</button>
+                <button class="pin-key" onclick="clearPin()">&#10005;</button>
+                <button class="pin-key" onclick="enterPin('0')">0</button>
+                <button class="pin-key" onclick="deleteLastPin()">&#9003;</button>
+            </div>
+            <div class="pin-error" id="pinError"></div>
+        </div>
+    </div>
+
+    <div class="content" id="mainContent">
+        <div class="container">
+            <div class="header">
+                <div class="header-left">
+                    <div class="logo-icon">A</div>
+                    <div class="header-title">Admin Portal</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div class="admin-badge">
+                        &#128737; AMMINISTRATORE
+                    </div>
+                    <button class="logout-btn" onclick="logout()">Esci</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Totale Timbrature</div>
+                    <div class="stat-value" id="totalEntries">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Utenti Attivi</div>
+                    <div class="stat-value" id="activeUsers">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Ore Lavorate</div>
+                    <div class="stat-value" id="totalHours">0h</div>
+                </div>
+            </div>
+
+            <div class="controls-panel">
+                <div class="filter-bar">
+                    <select class="filter-select" id="monthFilter" onchange="loadTimbrature()">
+                        <option value="">Seleziona mese...</option>
+                    </select>
+                    <select class="filter-select" id="userFilter" onchange="applyFilters()">
+                        <option value="">Tutti gli utenti</option>
+                    </select>
+                    <button class="btn btn-success" onclick="openAddModal()">
+                        &#10133; Aggiungi Timbratura
+                    </button>
+                    <button class="btn btn-primary" id="saveBtn" onclick="saveChanges()" style="display:none;">
+                        &#128190; Salva Modifiche
+                    </button>
+                </div>
+            </div>
+
+            <div class="timbrature-table">
+                <div id="tableContainer">
+                    <div class="no-data">Seleziona un mese per visualizzare le timbrature</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">&#10133; Aggiungi Nuova Timbratura</div>
+            
+            <div class="form-group">
+                <label class="form-label">Data</label>
+                <input type="date" class="form-input" id="newDate" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Utente</label>
+                <select class="form-input" id="newUser" required>
+                    <option value="">Seleziona utente...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Tipo Timbratura</label>
+                <select class="form-input" id="newType" required>
+                    <option value="Ordinario">Ordinario</option>
+                    <option value="Straordinario">Straordinario</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Ingresso</label>
+                <input type="time" class="form-input" id="newCheckin" step="1" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Uscita</label>
+                <input type="time" class="form-input" id="newCheckout" step="1" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Inizio Pausa (opzionale)</label>
+                <input type="time" class="form-input" id="newBreakStart" step="1">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Fine Pausa (opzionale)</label>
+                <input type="time" class="form-input" id="newBreakEnd" step="1">
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-danger" onclick="closeAddModal()">Annulla</button>
+                <button class="btn btn-success" onclick="addNewTimbratura()">Aggiungi</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        const API_URL = 'http://IP_SERVER:3000/api';
+        const ADMIN_PIN = '1234';
+
+        const users = [
+            { id: 1, name: 'User1', initials: 'U1', color: '#4169E1' },
+            { id: 2, name: 'User2', initials: 'U2', color: '#6f42c1' },
+            { id: 3, name: 'User3', initials: 'U3', color: '#82c91e' },
+            { id: 4, name: 'User4', initials: 'U4', color: '#1e88e5' },
+            { id: 5, name: 'User5', initials: 'U5', color: '#2e7d32' },
+            { id: 6, name: 'User6', initials: 'U6', color: '#ff9800' },
+            { id: 7, name: 'User7', initials: 'U7', color: '#1976d2' },
+            { id: 8, name: 'User8', initials: 'U8', color: '#00897b' }
+        ];
+
+        let currentPin = '';
+        let csvData = [];
+        let filteredData = [];
+        let modifications = [];
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function enterPin(digit) {
+            if (currentPin.length < 4) {
+                currentPin += digit;
+                updatePinDisplay();
+                
+                if (currentPin.length === 4) {
+                    setTimeout(() => verifyPin(), 300);
+                }
+            }
+        }
+
+        function deleteLastPin() {
+            if (currentPin.length > 0) {
+                currentPin = currentPin.slice(0, -1);
+                updatePinDisplay();
+            }
+        }
+
+        function clearPin() {
+            currentPin = '';
+            clearPinDisplay();
+            document.getElementById('pinError').textContent = '';
+        }
+
+        function updatePinDisplay() {
+            for (let i = 1; i <= 4; i++) {
+                const input = document.getElementById(`pin${i}`);
+                input.value = i <= currentPin.length ? '\u2022' : '';
+                input.classList.remove('error');
+            }
+        }
+
+        function clearPinDisplay() {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`pin${i}`).value = '';
+                document.getElementById(`pin${i}`).classList.remove('error');
+            }
+        }
+
+        function showPinError() {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`pin${i}`).classList.add('error');
+            }
+            document.getElementById('pinError').textContent = 'PIN errato!';
+            setTimeout(() => {
+                clearPin();
+            }, 1000);
+        }
+
+        function verifyPin() {
+            if (currentPin === ADMIN_PIN) {
+                document.getElementById('loginPanel').classList.add('hidden');
+                document.getElementById('mainContent').classList.add('active');
+                populateMonthFilter();
+                populateUserSelects();
+            } else {
+                showPinError();
+            }
+        }
+
+        function logout() {
+            // Pulisci tutti i form prima di ricaricare
+            document.getElementById('monthFilter').value = '';
+            document.getElementById('userFilter').value = '';
+            document.getElementById('tableContainer').innerHTML = '<div class="no-data">Seleziona un mese per visualizzare le timbrature</div>';
+            document.getElementById('saveBtn').style.display = 'none';
+            
+            // Forza il ricaricamento completo senza cache
+            window.location.href = window.location.href.split('?')[0] + '?t=' + new Date().getTime();
+        }
+
+        function populateMonthFilter() {
+            const select = document.getElementById('monthFilter');
+            select.innerHTML = '<option value="">Seleziona mese...</option>';
+            
+            const now = new Date();
+            for (let i = 0; i < 12; i++) {
+                const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const monthName = date.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' });
+                
+                const option = document.createElement('option');
+                option.value = `${year}-${month}`;
+                option.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+                select.appendChild(option);
+            }
+        }
+
+        function populateUserSelects() {
+            const filterSelect = document.getElementById('userFilter');
+            const newUserSelect = document.getElementById('newUser');
+            
+            users.forEach(user => {
+                const option1 = document.createElement('option');
+                option1.value = user.name;
+                option1.textContent = user.name;
+                filterSelect.appendChild(option1);
+
+                const option2 = document.createElement('option');
+                option2.value = user.name;
+                option2.textContent = user.name;
+                newUserSelect.appendChild(option2);
+            });
+        }
+
+        async function loadTimbrature() {
+            const monthValue = document.getElementById('monthFilter').value;
+            if (!monthValue) return;
+
+            const [year, month] = monthValue.split('-');
+            
+            try {
+                const response = await fetch(`${API_URL}/report/${year}/${month}`);
+                if (!response.ok) {
+                    showNotification('File non trovato per questo mese', 'error');
+                    document.getElementById('tableContainer').innerHTML = '<div class="no-data">Nessun dato disponibile per questo mese</div>';
+                    return;
+                }
+
+                const csvText = await response.text();
+                parseCSV(csvText);
+                applyFilters();
+                updateStats();
+            } catch (error) {
+                showNotification('Errore nel caricamento dei dati', 'error');
+                console.error(error);
+            }
+        }
+
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
+            
+            csvData = lines.slice(1).map(line => {
+                const matches = line.match(/(".*?"|[^,]+)(?=\s*,|\s*$)/g);
+                const values = matches ? matches.map(field => field.replace(/^"|"$/g, '').trim()) : [];
+                
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index] || '';
+                });
+                return row;
+            });
+
+            modifications = [];
+        }
+
+        function applyFilters() {
+            const userFilter = document.getElementById('userFilter').value;
+            
+            if (userFilter) {
+                filteredData = csvData.filter(row => row['Nome Utente'] === userFilter);
+            } else {
+                filteredData = [...csvData];
+            }
+            
+            renderTable();
+        }
+
+        function updateStats() {
+            document.getElementById('totalEntries').textContent = csvData.length;
+            
+            const uniqueUsers = new Set(csvData.map(row => row['Nome Utente']));
+            document.getElementById('activeUsers').textContent = uniqueUsers.size;
+
+            let totalSeconds = 0;
+            csvData.forEach(row => {
+                const workTime = row['Tempo Lavoro Totale'];
+                if (workTime) {
+                    const parts = workTime.split(':');
+                    totalSeconds += parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
+                }
+            });
+            
+            const totalHours = Math.floor(totalSeconds / 3600);
+            document.getElementById('totalHours').textContent = `${totalHours}h`;
+        }
+
+        function renderTable() {
+            if (filteredData.length === 0) {
+                document.getElementById('tableContainer').innerHTML = '<div class="no-data">Nessuna timbratura trovata</div>';
+                document.getElementById('saveBtn').style.display = 'none';
+                return;
+            }
+
+            const editableFields = [
+                'Ingresso Ordinario',
+                'Uscita Ordinaria',
+                'Ingresso Straordinario',
+                'Uscita Straordinaria',
+                'Inizio Pausa',
+                'Fine Pausa'
+            ];
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Utente</th>
+                            <th>Entry</th>
+                            <th>Ingresso Ord.</th>
+                            <th>Uscita Ord.</th>
+                            <th>Ingresso Str.</th>
+                            <th>Uscita Str.</th>
+                            <th>Inizio Pausa</th>
+                            <th>Fine Pausa</th>
+                            <th>Tempo Lavoro</th>
+                            <th>Tempo Pausa</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            filteredData.forEach((row, displayIndex) => {
+                const globalIndex = csvData.indexOf(row);
+                const user = users.find(u => u.name === row['Nome Utente']);
+                
+                html += '<tr>';
+                html += `<td>${row['Data']}</td>`;
+                html += `<td><span class="user-badge-small" style="background: ${user ? user.color : '#6c757d'}">${row['Nome Utente']}</span></td>`;
+                html += `<td>${row['Entry']}</td>`;
+
+                editableFields.forEach(field => {
+                    const value = row[field] || '';
+                    
+                    html += '<td class="editable-cell">';
+                    html += `<input type="time" class="time-input" 
+                            value="${value}" 
+                            data-row="${globalIndex}" 
+                            data-field="${field}" 
+                            step="1"
+                            onchange="trackModification(this); recalculateWorkTime(${globalIndex})">`;
+                    html += '</td>';
+                });
+
+                html += `<td class="readonly-cell" id="work-${globalIndex}">${row['Tempo Lavoro Totale'] || '-'}</td>`;
+                html += `<td class="readonly-cell" id="break-${globalIndex}">${row['Tempo Pausa Totale'] || '-'}</td>`;
+                html += `<td class="action-icons">
+                    <button class="icon-btn" onclick="deleteRow(${globalIndex})" title="Elimina">&#128465;</button>
+                </td>`;
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            
+            document.getElementById('tableContainer').innerHTML = html;
+            document.getElementById('saveBtn').style.display = 'block';
+        }
+
+        function trackModification(input) {
+            const rowIndex = parseInt(input.dataset.row);
+            const field = input.dataset.field;
+            const value = input.value;
+
+            const existingMod = modifications.find(m => m.rowIndex === rowIndex && m.field === field);
+            if (existingMod) {
+                existingMod.value = value;
+            } else {
+                modifications.push({ rowIndex, field, value });
+            }
+
+            csvData[rowIndex][field] = value;
+        }
+
+        function recalculateWorkTime(rowIndex) {
+            const row = csvData[rowIndex];
+            
+            const isOrdinary = row['Ingresso Ordinario'] || row['Uscita Ordinaria'];
+            const isOvertime = row['Ingresso Straordinario'] || row['Uscita Straordinaria'];
+            
+            let checkinTime, checkoutTime;
+            
+            if (isOrdinary) {
+                checkinTime = row['Ingresso Ordinario'];
+                checkoutTime = row['Uscita Ordinaria'];
+            } else if (isOvertime) {
+                checkinTime = row['Ingresso Straordinario'];
+                checkoutTime = row['Uscita Straordinaria'];
+            }
+            
+            if (!checkinTime || !checkoutTime) {
+                return;
+            }
+            
+            const checkinSeconds = timeToSeconds(checkinTime);
+            const checkoutSeconds = timeToSeconds(checkoutTime);
+            
+            if (checkinSeconds === null || checkoutSeconds === null) {
+                return;
+            }
+            
+            let totalSeconds = checkoutSeconds - checkinSeconds;
+            if (totalSeconds < 0) totalSeconds += 24 * 3600;
+            
+            let breakSeconds = 0;
+            const breakStarts = row['Inizio Pausa'] ? row['Inizio Pausa'].split('|').map(s => s.trim()) : [];
+            const breakEnds = row['Fine Pausa'] ? row['Fine Pausa'].split('|').map(s => s.trim()) : [];
+            
+            for (let i = 0; i < Math.min(breakStarts.length, breakEnds.length); i++) {
+                const startSec = timeToSeconds(breakStarts[i]);
+                const endSec = timeToSeconds(breakEnds[i]);
+                if (startSec !== null && endSec !== null) {
+                    let duration = endSec - startSec;
+                    if (duration < 0) duration += 24 * 3600;
+                    breakSeconds += duration;
+                }
+            }
+            
+            const workSeconds = totalSeconds - breakSeconds;
+            
+            row['Tempo Lavoro Totale'] = secondsToTime(workSeconds);
+            row['Tempo Pausa Totale'] = secondsToTime(breakSeconds);
+            
+            const workCell = document.getElementById(`work-${rowIndex}`);
+            const breakCell = document.getElementById(`break-${rowIndex}`);
+            
+            if (workCell) workCell.textContent = row['Tempo Lavoro Totale'];
+            if (breakCell) breakCell.textContent = row['Tempo Pausa Totale'];
+            
+            const workMod = modifications.find(m => m.rowIndex === rowIndex && m.field === 'Tempo Lavoro Totale');
+            if (workMod) {
+                workMod.value = row['Tempo Lavoro Totale'];
+            } else {
+                modifications.push({ rowIndex, field: 'Tempo Lavoro Totale', value: row['Tempo Lavoro Totale'] });
+            }
+            
+            const breakMod = modifications.find(m => m.rowIndex === rowIndex && m.field === 'Tempo Pausa Totale');
+            if (breakMod) {
+                breakMod.value = row['Tempo Pausa Totale'];
+            } else {
+                modifications.push({ rowIndex, field: 'Tempo Pausa Totale', value: row['Tempo Pausa Totale'] });
+            }
+        }
+
+        function timeToSeconds(timeStr) {
+            if (!timeStr) return null;
+            const parts = timeStr.split(':');
+            if (parts.length < 2) return null;
+            
+            const hours = parseInt(parts[0]) || 0;
+            const minutes = parseInt(parts[1]) || 0;
+            const seconds = parseInt(parts[2]) || 0;
+            
+            return hours * 3600 + minutes * 60 + seconds;
+        }
+
+        function secondsToTime(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        function deleteRow(rowIndex) {
+            if (!confirm('Sei sicuro di voler eliminare questa timbratura?')) {
+                return;
+            }
+            
+            csvData.splice(rowIndex, 1);
+            modifications.push({ action: 'delete', rowIndex });
+            applyFilters();
+            updateStats();
+            showNotification('Riga eliminata. Ricorda di salvare le modifiche!', 'success');
+        }
+
+        async function saveChanges() {
+            if (modifications.length === 0) {
+                showNotification('Nessuna modifica da salvare', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('saveBtn');
+            btn.disabled = true;
+            btn.textContent = 'Salvataggio...';
+
+            try {
+                const monthValue = document.getElementById('monthFilter').value;
+                const [year, month] = monthValue.split('-');
+
+                const response = await fetch(`${API_URL}/update-timbrature`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        year,
+                        month,
+                        data: csvData,
+                        userId: 999,
+                        userName: 'ADMIN',
+                        isAdmin: true
+                    })
+                });
+
+                if (response.ok) {
+                    showNotification('Modifiche salvate con successo!', 'success');
+                    modifications = [];
+                    loadTimbrature();
+                } else {
+                    showNotification('Errore nel salvataggio', 'error');
+                }
+            } catch (error) {
+                showNotification('Errore di connessione', 'error');
+                console.error(error);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '\u{1F4BE} Salva Modifiche';
+            }
+        }
+
+        function openAddModal() {
+            const monthValue = document.getElementById('monthFilter').value;
+            if (!monthValue) {
+                showNotification('Seleziona prima un mese', 'error');
+                return;
+            }
+            
+            const [year, month] = monthValue.split('-');
+            const today = new Date();
+            const defaultDate = `${year}-${month}-${String(today.getDate()).padStart(2, '0')}`;
+            document.getElementById('newDate').value = defaultDate;
+            
+            document.getElementById('newUser').value = '';
+            document.getElementById('newType').value = 'Ordinario';
+            document.getElementById('newCheckin').value = '';
+            document.getElementById('newCheckout').value = '';
+            document.getElementById('newBreakStart').value = '';
+            document.getElementById('newBreakEnd').value = '';
+            
+            document.getElementById('addModal').classList.add('active');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.remove('active');
+        }
+
+        function addNewTimbratura() {
+            const date = document.getElementById('newDate').value;
+            const userName = document.getElementById('newUser').value;
+            const type = document.getElementById('newType').value;
+            const checkin = document.getElementById('newCheckin').value;
+            const checkout = document.getElementById('newCheckout').value;
+            const breakStart = document.getElementById('newBreakStart').value;
+            const breakEnd = document.getElementById('newBreakEnd').value;
+
+            if (!date || !userName || !checkin || !checkout) {
+                showNotification('Compila tutti i campi obbligatori', 'error');
+                return;
+            }
+
+            const dateObj = new Date(date);
+            const dateDisplay = dateObj.toLocaleDateString('it-IT', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+
+            const existingEntries = csvData.filter(row => 
+                row['Data'] === dateDisplay && row['Nome Utente'] === userName
+            );
+            const entryNumber = existingEntries.length + 1;
+
+            const checkinSec = timeToSeconds(checkin);
+            const checkoutSec = timeToSeconds(checkout);
+            let totalSec = checkoutSec - checkinSec;
+            if (totalSec < 0) totalSec += 24 * 3600;
+
+            let breakSec = 0;
+            if (breakStart && breakEnd) {
+                const breakStartSec = timeToSeconds(breakStart);
+                const breakEndSec = timeToSeconds(breakEnd);
+                breakSec = breakEndSec - breakStartSec;
+                if (breakSec < 0) breakSec += 24 * 3600;
+            }
+
+            const workSec = totalSec - breakSec;
+
+            const newRow = {
+                'Data': dateDisplay,
+                'Nome Utente': userName,
+                'Entry': `#${entryNumber}`,
+                'Ingresso Ordinario': type === 'Ordinario' ? checkin : '',
+                'Uscita Ordinaria': type === 'Ordinario' ? checkout : '',
+                'Ingresso Straordinario': type === 'Straordinario' ? checkin : '',
+                'Uscita Straordinaria': type === 'Straordinario' ? checkout : '',
+                'Inizio Pausa': breakStart || '',
+                'Fine Pausa': breakEnd || '',
+                'Tempo Lavoro Totale': secondsToTime(workSec),
+                'Tempo Pausa Totale': secondsToTime(breakSec),
+                'Tipo': type
+            };
+
+            csvData.push(newRow);
+            
+            csvData.sort((a, b) => {
+                const dateCompare = a['Data'].localeCompare(b['Data']);
+                if (dateCompare !== 0) return dateCompare;
+                const nameCompare = a['Nome Utente'].localeCompare(b['Nome Utente']);
+                if (nameCompare !== 0) return nameCompare;
+                return a['Entry'].localeCompare(b['Entry']);
+            });
+
+            modifications.push({ action: 'add', row: newRow });
+            
+            closeAddModal();
+            applyFilters();
+            updateStats();
+            showNotification('Timbratura aggiunta. Ricorda di salvare!', 'success');
+        }
+
+        document.getElementById('newDate').max = new Date().toISOString().split('T')[0];
+    </script>
+</body>
+</html>
