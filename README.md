@@ -9,7 +9,6 @@
 - [Descrizione](#descrizione)
 - [Come iniziare](#come-iniziare)
 - [Funzionamento](#funzionamento)
-- [Licenza](#licenza)
 
 # Descrizione
 Sistema studiato per la gestione delle timbrature dei dipendenti.
