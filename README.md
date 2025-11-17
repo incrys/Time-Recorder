@@ -66,31 +66,28 @@ npm -v
 
 *server.js*
 
-righe 15-22
-per GMAIL occorre generare una password APP
 ```
 user: 'sendermail@gmail.com',
-pass: 'PasswordApp'
+pass: 'PasswordApp' (per GMAIL occorre generare una password APP)
 ```
 
-riga 24
 ```
 const RECIPIENT_EMAIL = 'receiver@gmail.com';
 ```
 
+```
 riga 506-525
 funzione per l'invio del file giornalmente o una volta al mese, attualmente una volta al mese alle 9:00 (l'invio giornaliero è commentato)
+```
 
 *index.html*
 
-riga 804
 ```
 const API_URL = 'http://IP_SERVER:3000/api';
 ```
 
-righe 807-815
-definizione degli utenti e relativo PIN
 ```
+\\ definizione degli utenti e relativo PIN
         const users = [
             { id: 1, name: 'User1', initials: 'U1', color: '#4169E1', pin: '1234' },
             { id: 2, name: 'User2', initials: 'U2', color: '#6f42c1', pin: '1234' },
@@ -105,14 +102,12 @@ definizione degli utenti e relativo PIN
 
 *edit-timbrature.html*
 
-riga 457
 ```
 const API_URL = 'http://IP_SERVER:3000/api';
 ```
 
-righe 459-468
-è sufficiente ricopiarlo da index.html
 ```
+\\ è sufficiente ricopiarlo da index.html
         const users = [
             { id: 1, name: 'User1', initials: 'U1', color: '#4169E1', pin: '1234' },
             { id: 2, name: 'User2', initials: 'U2', color: '#6f42c1', pin: '1234' },
@@ -125,8 +120,6 @@ righe 459-468
         ];
 ```
 
-righe 647-648
-definizione PIN admin
 ```
 const API_URL = 'http://IP_SERVER:3000/api';
 const ADMIN_PIN = '1234';
