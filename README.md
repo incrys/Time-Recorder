@@ -73,13 +73,18 @@ npm -v
 
 ```
 mkdir  /var/www/marcatempo
-chown -R /var/www/marcatempo
+chown -R www-data:root /var/www/marcatempo/
+chmod -R 755 /var/www/marcatempo/
 cd  /var/www/marcatempo
 npm install
 ln -s /etc/nginx/sites-available/marcatempo /etc/nginx/sites-enabled/
+systemctl enable nginx
 systemctl start nginx
+mv marcatempo.sevice /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable marcatempo
+systemctl start marcatempo
 ```
-
 
 ## Modifica dei file
 
