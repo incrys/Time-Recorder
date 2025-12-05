@@ -157,29 +157,39 @@ const ADMIN_PIN = '1234';
 L'utente seleziona il proprio nominativo e viene richiesto il proprio PIN personale
 
 ![alt text](https://github.com/incrys/Time-Recorder/blob/main/marcatempoIMG/1.png?raw=true)
+![alt text](https://github.com/incrys/Time-Recorder/blob/main/marcatempoIMG/2.png?raw=true)
 
 Se l'utente risulta "inattivo", richiede se timbrare l'ingresso ordinario o spuntare la casella straordinario e successivamente il check-in (il pop-up scomparirà dopo 1 secondo dalla timbratura)
 
-[img]
+![alt text](https://github.com/incrys/Time-Recorder/blob/main/marcatempoIMG/3.png?raw=true)
 
 Una volta che l'utente ha effettuato un check-in, la sua riga cambierà colore e selezionando il suo nome chiederà nuovamente il PIN
 
-[img]
+![alt text](https://github.com/incrys/Time-Recorder/blob/main/marcatempoIMG/4.png?raw=true)
 
 A questo punto sarà possibile effettuare o il check-out oppure l'inizio della pausa
 
-[img]
+![alt text](https://github.com/incrys/Time-Recorder/blob/main/marcatempoIMG/5.png?raw=true)
 
 *edit-timbrature.html*
 
 Collegandosi al portale di edit sarà possibile inserire il proprio pin personale e accedere alle proprie timbrature.
 Ci sarà da selezionare il mese interessato, verranno listati tutti i campi editabili e in grigio quelli non editabili (timbrature già effettuate). Qualora esista una timbratura alla data corrente, la riga diverrà non editabile (sarà disponibile il giorno successivo)
 
-[img]
+![alt text](https://github.com/incrys/Time-Recorder/blob/main/marcatempoIMG/6.png?raw=true)
+![alt text](https://github.com/incrys/Time-Recorder/blob/main/marcatempoIMG/7.png?raw=true)
+![alt text](https://github.com/incrys/Time-Recorder/blob/main/marcatempoIMG/8.png?raw=true)
 
 *admin-timbrature.html*
 
 Collegandosi al portale admin, verrà richiesto il PIN dell'amministratore.
 Qui sarà possibile editare tutti gli orari dei dipendenti indifferentemente, selezionando solo mese e nome dipendente
 
-[img]
+![alt text](https://github.com/incrys/Time-Recorder/blob/main/marcatempoIMG/9.png?raw=true)
+![alt text](https://github.com/incrys/Time-Recorder/blob/main/marcatempoIMG/10.png?raw=true)
+
+*calcoloore.html*
+
+Qui è possibile importare il CSV ed avere il calcolo immediato delle ore effettuate. Sarà inoltre possibile modificare direttamente qui gli orari "errati"
+
+![alt text](https://github.com/incrys/Time-Recorder/blob/main/marcatempoIMG/11.png?raw=true)
