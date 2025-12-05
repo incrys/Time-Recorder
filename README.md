@@ -156,7 +156,7 @@ const ADMIN_PIN = '1234';
 
 L'utente seleziona il proprio nominativo e viene richiesto il proprio PIN personale
 
-![alt text](https://github.com/incrys/marcatempoIMG/1.png?raw=true)
+![alt text](https://github.com/incrys/Time-Recorder/blob/main/marcatempoIMG/1.png?raw=true)
 
 Se l'utente risulta "inattivo", richiede se timbrare l'ingresso ordinario o spuntare la casella straordinario e successivamente il check-in (il pop-up scomparirà dopo 1 secondo dalla timbratura)
 
