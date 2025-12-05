@@ -1,0 +1,29 @@
+[Unit]
+Description=;Marcatempo - nome azienda
+Documentation=https://github.com/incrys/Time-Recorder
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/marcatempo
+ExecStart=/usr/bin/node /var/www/marcatempo/server.js
+Restart=always
+RestartSec=10
+
+# Log
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=marcatempo
+
+# Sicurezza
+NonewPrivileges=true
+PrivateTmp=true
+
+# Variabili ambiente
+Environment=NODE_ENV=production
+Environment=PORT=3000
+
+[Install]
+WantedBy=multi-user.target
