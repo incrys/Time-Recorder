@@ -1,6 +1,6 @@
-# Time Recorder
+# Marcatempo
 
-> Time clock per piccole aziende
+> MArcatempo per piccole aziende
 
 *Read this in other languages: [English](README.EN.md).*
 
@@ -22,7 +22,8 @@ Il sistema prevede:
 - Uscita straordinario
 - Auto check-out dei dipendenti che hanno dimenticato di timbrare l'uscita alle 23:59
 - Portale utente per la modifica degli orari precedenti la giornata corrente
-- Portale admin per la modifica di tutti gli orari dei dipendenti
+- Portale admin per la modifica giornaliera di tutti gli orari dei dipendenti
+- Portale admin per la modifica degli orari dopo la fine del mese
 - Invio del CSV generato durante il mese, il 1° del mese successivo alle 9:00
 
 # Come iniziare
@@ -38,6 +39,7 @@ Il sistema prevede:
 sudo apt update
 sudo apt install nodejs -y
 sudo apt install npm -y
+sudo apt install nginx -y
 ```
 
 ## Verifica
@@ -50,7 +52,7 @@ npm -v
 ## Stuttura delle cartelle
 
 ```
-/var/www/timeclock
+/var/www/marcatempo
  ├── package.json
  ├── server.js
  ├── timbrature (verrà creata alla prima timbratura creata)
@@ -59,15 +61,23 @@ npm -v
       ├── edit-timbrature.html
       ├── admin-timbrature.html
 
+/etc/nginx/site-available/
+ └──marcatempo
+
+/etc/systemd/system/
+ └──marcatempo.service
+
 ```
 
 # Installazione
 
 ```
-mkdir  /var/www/timeclock
-chown -R /var/www/timeclock
-cd  /var/www/timeclock
+mkdir  /var/www/marcatempo
+chown -R /var/www/marcatempo
+cd  /var/www/marcatempo
 npm install
+ln -s /etc/nginx/sites-available/marcatempo /etc/nginx/sites-enabled/
+systemctl start nginx
 ```
 
 
