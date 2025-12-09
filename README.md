@@ -191,6 +191,7 @@ Qui sarà possibile editare tutti gli orari dei dipendenti indifferentemente, se
 
 *calcoloore.html*
 
-Qui è possibile importare il CSV ed avere il calcolo immediato delle ore effettuate. Sarà inoltre possibile modificare direttamente qui gli orari "errati"
+Qui è possibile importare il CSV ed avere il calcolo immediato delle ore effettuate. Sarà inoltre possibile modificare direttamente qui gli orari "errati" ed esportare un nuovo CSV con le modifiche effettuate.
+N.B. l'orario per essere aggiornato correttamente, occorre che venga inserito come HH:MM:SS
 
 ![alt text](https://github.com/incrys/Time-Recorder/blob/main/marcatempoIMG/11.png?raw=true)
