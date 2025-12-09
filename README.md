@@ -1,6 +1,6 @@
 # Marcatempo
 
-> MArcatempo per piccole aziende
+> Marcatempo per piccole aziende
 
 *Read this in other languages: [English](README.EN.md).*
 
