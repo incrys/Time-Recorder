@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portale Admin - Timbrature</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-item {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        select, input[type="file"], input[type="text"], input[type="time"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .editable {
+            background: #fff3cd;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .editable:hover {
+            background: #ffeaa7;
+        }
+
+        input.edit-input {
+            width: 100%;
+            padding: 6px;
+            border: 2px solid #667eea;
+            border-radius: 4px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-save {
+            background: #28a745;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .btn-cancel {
+            background: #dc3545;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .btn-export {
+            background: #17a2b8;
+            margin-top: 20px;
+        }
+
+        .message {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🕐 Portale Admin Timbrature</h1>
+            <p>Gestione e modifica delle timbrature dipendenti</p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <div class="control-item">
+                    <label for="fileInput">Carica file CSV:</label>
+                    <input type="file" id="fileInput" accept=".csv">
+                </div>
+                <div class="control-item">
+                    <label for="employeeSelect">Seleziona dipendente:</label>
+                    <select id="employeeSelect">
+                        <option value="">Tutti i dipendenti</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <button onclick="filterData()">Filtra</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="statsContainer"></div>
+
+        <div id="messageBox" class="message"></div>
+
+        <div class="content">
+            <div class="table-container">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Nome</th>
+                            <th>Entry</th>
+                            <th>Ingresso</th>
+                            <th>Uscita</th>
+                            <th>Inizio Pausa</th>
+                            <th>Fine Pausa</th>
+                            <th>Tempo Lavoro</th>
+                            <th>Tempo Pausa</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td colspan="10" style="text-align: center; padding: 40px; color: #6c757d;">
+                                Carica un file CSV per iniziare
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn-export" onclick="exportData()">📥 Esporta CSV Modificato</button>
+        </div>
+    </div>
+
+    <script>
+        let allData = [];
+        let filteredData = [];
+        let editingRow = null;
+
+        document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    parseCSV(e.target.result);
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function parseCSV(csv) {
+            const lines = csv.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
+            
+            allData = [];
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index] || '';
+                });
+                allData.push(row);
+            }
+
+            populateEmployeeSelect();
+            filteredData = [...allData];
+            renderTable();
+            updateStats();
+            showMessage('File caricato con successo!', 'success');
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current.trim());
+            return result;
+        }
+
+        function populateEmployeeSelect() {
+            const employees = [...new Set(allData.map(row => row['Nome Utente']))].sort();
+            const select = document.getElementById('employeeSelect');
+            select.innerHTML = '<option value="">Tutti i dipendenti</option>';
+            employees.forEach(emp => {
+                select.innerHTML += `<option value="${emp}">${emp}</option>`;
+            });
+        }
+
+        function filterData() {
+            const selectedEmployee = document.getElementById('employeeSelect').value;
+            if (selectedEmployee) {
+                filteredData = allData.filter(row => row['Nome Utente'] === selectedEmployee);
+            } else {
+                filteredData = [...allData];
+            }
+            renderTable();
+            updateStats();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 40px; color: #6c757d;">Nessun dato disponibile</td></tr>';
+                return;
+            }
+
+            filteredData.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row['Data']}</td>
+                    <td>${row['Nome Utente']}</td>
+                    <td>${row['Entry']}</td>
+                    <td class="editable" onclick="editCell(${index}, 'Ingresso Ordinario')">${row['Ingresso Ordinario']}</td>
+                    <td class="editable" onclick="editCell(${index}, 'Uscita Ordinaria')">${row['Uscita Ordinaria']}</td>
+                    <td class="editable" onclick="editCell(${index}, 'Inizio Pausa')">${row['Inizio Pausa']}</td>
+                    <td class="editable" onclick="editCell(${index}, 'Fine Pausa')">${row['Fine Pausa']}</td>
+                    <td>${row['Tempo Lavoro Totale']}</td>
+                    <td>${row['Tempo Pausa Totale']}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-save" onclick="recalculateRow(${index})">♻️ Ricalcola</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function editCell(rowIndex, field) {
+            if (editingRow !== null) return;
+            
+            editingRow = rowIndex;
+            const row = filteredData[rowIndex];
+            const cells = document.querySelectorAll(`#tableBody tr:nth-child(${rowIndex + 1}) td`);
+            const fieldIndex = ['Data', 'Nome Utente', 'Entry', 'Ingresso Ordinario', 'Uscita Ordinaria', 'Inizio Pausa', 'Fine Pausa'].indexOf(field);
+            
+            const cell = cells[fieldIndex];
+            const currentValue = row[field];
+            cell.innerHTML = `<input type="text" class="edit-input" value="${currentValue}" placeholder="HH:MM:SS" onblur="saveCell(${rowIndex}, '${field}', this.value)" onkeypress="handleKeyPress(event, ${rowIndex}, '${field}', this)">`;
+            cell.querySelector('input').focus();
+        }
+
+        function handleKeyPress(event, rowIndex, field, input) {
+            if (event.key === 'Enter') {
+                saveCell(rowIndex, field, input.value);
+            }
+        }
+
+        function saveCell(rowIndex, field, newValue) {
+            const dataIndex = allData.findIndex(r => 
+                r['Data'] === filteredData[rowIndex]['Data'] && 
+                r['Nome Utente'] === filteredData[rowIndex]['Nome Utente'] &&
+                r['Entry'] === filteredData[rowIndex]['Entry']
+            );
+            
+            allData[dataIndex][field] = newValue;
+            filteredData[rowIndex][field] = newValue;
+            editingRow = null;
+            renderTable();
+            showMessage('Cella modificata con successo!', 'success');
+        }
+
+        function recalculateRow(rowIndex) {
+            const row = filteredData[rowIndex];
+            
+            // Gestisci pause multiple (separate da " | ")
+            const inizioPausaStr = row['Inizio Pausa'] || '';
+            const finePausaStr = row['Fine Pausa'] || '';
+            
+            const inizioPause = inizioPausaStr.split('|').map(s => s.trim()).filter(s => s);
+            const finePause = finePausaStr.split('|').map(s => s.trim()).filter(s => s);
+            
+            const ingresso = timeToSeconds(row['Ingresso Ordinario']);
+            const uscita = timeToSeconds(row['Uscita Ordinaria']);
+
+            let tempoLavoro = 0;
+            let tempoPausa = 0;
+
+            if (ingresso && uscita) {
+                // Se l'uscita è 23:59:59 significa che non è stata ancora registrata
+                if (row['Uscita Ordinaria'] === '23:59:59') {
+                    tempoLavoro = 0;
+                } else {
+                    tempoLavoro = uscita - ingresso;
+                }
+            }
+
+            // Calcola pause multiple
+            const numPause = Math.min(inizioPause.length, finePause.length);
+            for (let i = 0; i < numPause; i++) {
+                const inizio = timeToSeconds(inizioPause[i]);
+                const fine = timeToSeconds(finePause[i]);
+                if (inizio && fine && fine > inizio) {
+                    const pausaDuration = fine - inizio;
+                    tempoPausa += pausaDuration;
+                }
+            }
+
+            // Sottrai le pause dal tempo di lavoro
+            if (tempoPausa > 0) {
+                tempoLavoro -= tempoPausa;
+            }
+
+            // Assicurati che non ci siano valori negativi
+            if (tempoLavoro < 0) tempoLavoro = 0;
+            if (tempoPausa < 0) tempoPausa = 0;
+
+            const dataIndex = allData.findIndex(r => 
+                r['Data'] === row['Data'] && 
+                r['Nome Utente'] === row['Nome Utente'] &&
+                r['Entry'] === row['Entry']
+            );
+
+            allData[dataIndex]['Tempo Lavoro Totale'] = secondsToTime(tempoLavoro);
+            allData[dataIndex]['Tempo Pausa Totale'] = secondsToTime(tempoPausa);
+            filteredData[rowIndex]['Tempo Lavoro Totale'] = secondsToTime(tempoLavoro);
+            filteredData[rowIndex]['Tempo Pausa Totale'] = secondsToTime(tempoPausa);
+
+            renderTable();
+            updateStats();
+            showMessage('Orari ricalcolati con successo!', 'success');
+        }
+
+        function timeToSeconds(timeStr) {
+            if (!timeStr || timeStr === '') return 0;
+            const parts = timeStr.split(':');
+            if (parts.length === 3) {
+                return parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
+            } else if (parts.length === 2) {
+                return parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60;
+            }
+            return 0;
+        }
+
+        function secondsToTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function updateStats() {
+            const selectedEmployee = document.getElementById('employeeSelect').value;
+            let totalSeconds = 0;
+            let totalPauseSeconds = 0;
+            let giorni = new Set();
+
+            filteredData.forEach(row => {
+                const time = row['Tempo Lavoro Totale'];
+                if (time) {
+                    totalSeconds += timeToSeconds(time);
+                }
+                const pause = row['Tempo Pausa Totale'];
+                if (pause) {
+                    totalPauseSeconds += timeToSeconds(pause);
+                }
+                giorni.add(row['Data']);
+            });
+
+            const totalHours = Math.floor(totalSeconds / 3600);
+            const totalMins = Math.floor((totalSeconds % 3600) / 60);
+            const pauseHours = Math.floor(totalPauseSeconds / 3600);
+            const pauseMins = Math.floor((totalPauseSeconds % 3600) / 60);
+
+            const statsHTML = `
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3>Dipendente</h3>
+                        <div class="value">${selectedEmployee || 'Tutti'}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Giorni Lavorati</h3>
+                        <div class="value">${giorni.size}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Ore Totali</h3>
+                        <div class="value">${totalHours}h ${totalMins}m</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Pause Totali</h3>
+                        <div class="value">${pauseHours}h ${pauseMins}m</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('statsContainer').innerHTML = statsHTML;
+        }
+
+        function exportData() {
+            if (allData.length === 0) {
+                showMessage('Nessun dato da esportare!', 'error');
+                return;
+            }
+
+            const headers = Object.keys(allData[0]);
+            let csv = headers.map(h => `"${h}"`).join(',') + '\n';
+            
+            allData.forEach(row => {
+                csv += headers.map(h => `"${row[h]}"`).join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `timbrature_modificato_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+            showMessage('File esportato con successo!', 'success');
+        }
+
+        function showMessage(text, type) {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = text;
+            messageBox.className = `message ${type}`;
+            messageBox.style.display = 'block';
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
